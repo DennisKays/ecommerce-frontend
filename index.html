@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - E-commerce Demo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="#" class="logo">Store</a>
+            <div class="nav-right">
+                <div class="cart-icon" onclick="toggleCart()">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 6h15l-1.5 9h-12L6 6z"></path>
+                        <circle cx="9" cy="20" r="1"></circle>
+                        <circle cx="18" cy="20" r="1"></circle>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <h1>Modern E-commerce</h1>
+            <p>Built with Python FastAPI backend and responsive frontend</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterProducts('all')">All</button>
+            <button class="filter-btn" onclick="filterProducts('Electronics')">Electronics</button>
+            <button class="filter-btn" onclick="filterProducts('Sports')">Sports</button>
+            <button class="filter-btn" onclick="filterProducts('Home')">Home</button>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <!-- Products loaded here -->
+        </div>
+    </main>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-body" id="modalBody">
+                <!-- Product details -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <button onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">Total: $<span id="cartTotal">0.00</span></div>
+            <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
