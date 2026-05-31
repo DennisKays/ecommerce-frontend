@@ -190,9 +190,20 @@
                 </div>
                 <div class="form-group">
                     <label>Product Image</label>
-                    <input type="file" id="productImageFile" accept="image/*" required>
-                    <input type="hidden" id="productImage" value="">
-                    <p id="uploadStatus" style="color: #6b7280; font-size: 0.875rem; margin-top: 4px;">Select an image file</p>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <button type="button" id="uploadTab" onclick="switchImageInput('upload')" style="flex: 1; padding: 8px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;">Upload File</button>
+                        <button type="button" id="urlTab" onclick="switchImageInput('url')" style="flex: 1; padding: 8px; background: white; color: #374151; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;">Use URL</button>
+                    </div>
+                    
+                    <div id="uploadSection">
+                        <input type="file" id="productImageFile" accept="image/*">
+                        <input type="hidden" id="productImage" value="">
+                        <p id="uploadStatus" style="color: #6b7280; font-size: 0.875rem; margin-top: 4px;">Select an image file</p>
+                    </div>
+                    
+                    <div id="urlSection" style="display: none;">
+                        <input type="url" id="productImageUrl" placeholder="https://images.unsplash.com/...">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Stock Quantity</label>
@@ -272,6 +283,31 @@
             } else {
                 document.getElementById('ordersSection').classList.add('active');
                 event.target.classList.add('active');
+            }
+        }
+
+        function switchImageInput(type) {
+            const uploadSection = document.getElementById('uploadSection');
+            const urlSection = document.getElementById('urlSection');
+            const uploadTab = document.getElementById('uploadTab');
+            const urlTab = document.getElementById('urlTab');
+            
+            if (type === 'upload') {
+                uploadSection.style.display = 'block';
+                urlSection.style.display = 'none';
+                uploadTab.style.background = '#2563eb';
+                uploadTab.style.color = 'white';
+                urlTab.style.background = 'white';
+                urlTab.style.color = '#374151';
+                document.getElementById('productImageUrl').value = '';
+            } else {
+                uploadSection.style.display = 'none';
+                urlSection.style.display = 'block';
+                urlTab.style.background = '#2563eb';
+                urlTab.style.color = 'white';
+                uploadTab.style.background = 'white';
+                uploadTab.style.color = '#374151';
+                document.getElementById('productImage').value = '';
             }
         }
 
@@ -355,12 +391,23 @@
         async function saveProduct(event) {
             event.preventDefault();
             
-            // Upload image first if file selected and no URL yet
+            // Upload image if file selected
             const fileInput = document.getElementById('productImageFile');
             const imageUrl = document.getElementById('productImage').value;
+            const urlInput = document.getElementById('productImageUrl').value;
+            
+            let finalImageUrl = imageUrl;
             
             if (fileInput.files[0] && !imageUrl) {
                 await uploadImage();
+                finalImageUrl = document.getElementById('productImage').value;
+            } else if (urlInput) {
+                finalImageUrl = urlInput;
+            }
+            
+            if (!finalImageUrl) {
+                alert('Please upload an image or provide an image URL');
+                return;
             }
             
             const product = {
@@ -368,7 +415,7 @@
                 description: document.getElementById('productDescription').value,
                 price: parseFloat(document.getElementById('productPrice').value),
                 category: document.getElementById('productCategory').value,
-                image_url: document.getElementById('productImage').value,
+                image_url: finalImageUrl,
                 stock: parseInt(document.getElementById('productStock').value)
             };
 
@@ -390,8 +437,10 @@
                         alert('Product added successfully!');
                         document.getElementById('productForm').reset();
                         document.getElementById('productImage').value = '';
+                        document.getElementById('productImageUrl').value = '';
                         document.getElementById('uploadStatus').textContent = 'Select an image file';
                         document.getElementById('uploadStatus').style.color = '#6b7280';
+                        switchImageInput('upload');
                         loadProducts();
                     }
                 }
