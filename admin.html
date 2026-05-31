@@ -189,8 +189,10 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Image URL</label>
-                    <input type="url" id="productImage" placeholder="https://images.unsplash.com/..." required>
+                    <label>Product Image</label>
+                    <input type="file" id="productImageFile" accept="image/*" required>
+                    <input type="hidden" id="productImage" value="">
+                    <p id="uploadStatus" style="color: #6b7280; font-size: 0.875rem; margin-top: 4px;">Select an image file</p>
                 </div>
                 <div class="form-group">
                     <label>Stock Quantity</label>
@@ -239,7 +241,7 @@
 
     <script>
         const API_URL = 'https://ecommerce-api-david.onrender.com';
-        const ADMIN_PASSWORD = 'admin123'; // Change this in production
+        const ADMIN_PASSWORD = 'admin123';
 
         function login() {
             const input = document.getElementById('passwordInput').value;
@@ -270,6 +272,34 @@
             } else {
                 document.getElementById('ordersSection').classList.add('active');
                 event.target.classList.add('active');
+            }
+        }
+
+        async function uploadImage() {
+            const fileInput = document.getElementById('productImageFile');
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            const status = document.getElementById('uploadStatus');
+            status.textContent = 'Uploading...';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                document.getElementById('productImage').value = data.image_url;
+                status.textContent = 'Image uploaded successfully!';
+                status.style.color = '#16a34a';
+            } catch (error) {
+                console.error('Upload error:', error);
+                status.textContent = 'Upload failed. Try again.';
+                status.style.color = '#dc2626';
             }
         }
 
@@ -325,6 +355,14 @@
         async function saveProduct(event) {
             event.preventDefault();
             
+            // Upload image first if file selected and no URL yet
+            const fileInput = document.getElementById('productImageFile');
+            const imageUrl = document.getElementById('productImage').value;
+            
+            if (fileInput.files[0] && !imageUrl) {
+                await uploadImage();
+            }
+            
             const product = {
                 name: document.getElementById('productName').value,
                 description: document.getElementById('productDescription').value,
@@ -338,19 +376,22 @@
             
             try {
                 if (productId) {
-                    // Edit existing - you'd need a PUT endpoint for this
                     alert('Edit functionality requires backend update. For now, delete and recreate.');
                 } else {
-                    // Create new
                     const response = await fetch(`${API_URL}/products`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         body: JSON.stringify(product)
                     });
                     
                     if (response.ok) {
                         alert('Product added successfully!');
                         document.getElementById('productForm').reset();
+                        document.getElementById('productImage').value = '';
+                        document.getElementById('uploadStatus').textContent = 'Select an image file';
+                        document.getElementById('uploadStatus').style.color = '#6b7280';
                         loadProducts();
                     }
                 }
@@ -377,7 +418,6 @@
         }
 
         function editProduct(id) {
-            // For now, alert that edit needs backend update
             alert('Edit functionality: Fill the form above with product details, then save. (Full edit coming soon)');
         }
     </script>
