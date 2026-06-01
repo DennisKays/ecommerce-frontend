@@ -47,8 +47,6 @@
             text-align: center;
             margin-bottom: 32px;
         }
-        
-        /* Plans Grid */
         .plans {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -124,8 +122,6 @@
             color: var(--primary);
             font-weight: 700;
         }
-        
-        /* Selected Plan Display */
         .selected-plan {
             background: #eff6ff;
             border: 2px solid var(--primary);
@@ -142,8 +138,6 @@
             font-size: 1.5rem;
             font-weight: 700;
         }
-        
-        /* Instructions */
         .instructions {
             background: #fefce8;
             border: 1px solid #fde047;
@@ -176,8 +170,6 @@
             margin: 16px 0;
             letter-spacing: 2px;
         }
-        
-        /* Form */
         .form-group {
             margin-bottom: 16px;
         }
@@ -226,17 +218,18 @@
             color: #991b1b;
             display: block;
         }
-        .back-link {
-            display: block;
-            text-align: center;
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
             margin-top: 16px;
+        }
+        .nav-links a {
             color: var(--primary);
             text-decoration: none;
             font-size: 0.875rem;
         }
         .hidden { display: none; }
-        
-        /* WhatsApp Button */
         .whatsapp-btn {
             display: inline-flex;
             align-items: center;
@@ -252,15 +245,8 @@
             width: 100%;
             justify-content: center;
         }
-        .whatsapp-btn:hover {
-            background: #128c7e;
-        }
-        .whatsapp-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-        
-        /* Help section */
+        .whatsapp-btn:hover { background: #128c7e; }
+        .whatsapp-btn svg { width: 20px; height: 20px; }
         .help-box {
             background: #f0fdf4;
             border: 1px solid #86efac;
@@ -279,11 +265,8 @@
             font-size: 0.75rem;
             margin-bottom: 12px;
         }
-        
         @media (max-width: 768px) {
-            .plans {
-                grid-template-columns: 1fr;
-            }
+            .plans { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -293,7 +276,6 @@
             <h1>Choose Your Plan</h1>
             <p class="subtitle">Select a plan and activate your store</p>
             
-            <!-- Plans -->
             <div class="plans">
                 <div class="plan-card" onclick="selectPlan('basic', 19.99)" id="plan-basic">
                     <h3>Basic</h3>
@@ -330,10 +312,9 @@
                 </div>
             </div>
             
-            <!-- Selected Plan Display -->
             <div class="selected-plan" id="selectedPlanDisplay">
                 <h3>Selected: <span id="selectedPlanName">Pro</span> Plan</h3>
-                <div class="price">$<<span id="selectedPlanPrice">49.99</span>/month</div>
+                <div class="price">$<span id="selectedPlanPrice">49.99</span>/month</div>
             </div>
             
             <div id="paymentForm">
@@ -341,7 +322,7 @@
                     <h3>📱 Pay with Mobile Money</h3>
                     <ol>
                         <li>Open your EcoCash/OneMoney app</li>
-                        <li>Send <strong>$<<span id="payAmount">49.99</span> USD</strong> to:</li>
+                        <li>Send <strong>$<span id="payAmount">49.99</span> USD</strong> to:</li>
                         <li><strong>Merchant Number: +263 78 847 9113</strong></li>
                         <li>Use this reference code:</li>
                     </ol>
@@ -367,7 +348,6 @@
                     <button type="submit">I've Paid - Submit for Verification</button>
                 </form>
                 
-                <!-- WhatsApp Help Section -->
                 <div class="help-box">
                     <h4>Need Help?</h4>
                     <p>Chat with us on WhatsApp for payment support</p>
@@ -384,18 +364,24 @@
                 <div class="message success" style="display: block;">
                     ✅ Payment submitted! We'll verify and activate your store within 24 hours.
                 </div>
-                <a href="index.html" class="back-link">← Back to Store</a>
+                <div class="nav-links">
+                    <a href="profile.html">My Account</a>
+                    <a href="index.html">Back to Store</a>
+                </div>
             </div>
             
             <div id="message" class="message"></div>
-            <a href="auth.html" class="back-link">← Back to Login</a>
+            
+            <div class="nav-links">
+                <a href="profile.html">My Account</a>
+                <a href="index.html">← Back to Store</a>
+            </div>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://ecommerce-api-david.onrender.com';
         
-        // Check if logged in
         const userId = localStorage.getItem('user_id');
         if (!userId) {
             window.location.href = 'auth.html';
@@ -404,7 +390,6 @@
         let selectedPlan = 'pro';
         let selectedPrice = 49.99;
         
-        // Select default plan on load
         document.addEventListener('DOMContentLoaded', function() {
             selectPlan('pro', 49.99);
         });
@@ -413,19 +398,16 @@
             selectedPlan = plan;
             selectedPrice = price;
             
-            // Update visual selection
             document.querySelectorAll('.plan-card').forEach(card => {
                 card.classList.remove('selected');
             });
             document.getElementById('plan-' + plan).classList.add('selected');
             
-            // Update display
             document.getElementById('selectedPlanName').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
             document.getElementById('selectedPlanPrice').textContent = price.toFixed(2);
             document.getElementById('payAmount').textContent = price.toFixed(2);
         }
         
-        // Generate reference code
         function generateRef() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             let result = 'SUB-';
