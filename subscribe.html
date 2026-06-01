@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe - Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --bg: #f9fafb;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 0 24px;
+        }
+        .card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .subtitle {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .plan-box {
+            background: #eff6ff;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .plan-box h2 {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+        .plan-box .price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .plan-box .period {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        .instructions {
+            background: #fefce8;
+            border: 1px solid #fde047;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .instructions h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: #854d0e;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            color: #854d0e;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        .reference-code {
+            background: var(--text);
+            color: var(--white);
+            padding: 12px;
+            border-radius: var(--radius);
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.25rem;
+            margin: 16px 0;
+            letter-spacing: 2px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background: var(--primary-dark);
+        }
+        .message {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            display: none;
+        }
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+            display: block;
+        }
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Activate Your Store</h1>
+            <p class="subtitle">Subscribe to start selling online</p>
+            
+            <div class="plan-box">
+                <h2>Basic Plan</h2>
+                <div class="price">$19.99</div>
+                <div class="period">per month</div>
+            </div>
+            
+            <div id="paymentForm">
+                <div class="instructions">
+                    <h3>📱 Pay with Mobile Money</h3>
+                    <ol>
+                        <li>Open your EcoCash/OneMoney app</li>
+                        <li>Send <strong>$19.99 USD</strong> to:</li>
+                        <li><strong>Merchant Number: +263 77 123 4567</strong></li>
+                        <li>Use this reference code:</li>
+                    </ol>
+                    <div class="reference-code" id="refCode">LOADING...</div>
+                    <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 8px; text-align: center;">
+                        After payment, fill the form below. We'll verify and activate within 24 hours.
+                    </p>
+                </div>
+                
+                <form onsubmit="submitPayment(event)">
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select id="paymentMethod">
+                            <option value="ecocash">EcoCash</option>
+                            <option value="onemoney">OneMoney</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Transaction Reference (from your payment)</label>
+                        <input type="text" id="transactionRef" placeholder="e.g. ECO123456" required>
+                    </div>
+                    <button type="submit">I've Paid - Submit for Verification</button>
+                </form>
+            </div>
+            
+            <div id="successMessage" class="hidden">
+                <div class="message success" style="display: block;">
+                    ✅ Payment submitted! We'll verify and activate your store within 24 hours.
+                </div>
+                <a href="index.html" class="back-link">← Back to Store</a>
+            </div>
+            
+            <div id="message" class="message"></div>
+            <a href="auth.html" class="back-link">← Back to Login</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://ecommerce-api-david.onrender.com';
+        
+        // Check if logged in
+        const userId = localStorage.getItem('user_id');
+        if (!userId) {
+            window.location.href = 'auth.html';
+        }
+        
+        // Generate reference code
+        function generateRef() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = 'SUB-';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
+        document.getElementById('refCode').textContent = generateRef();
+        
+        function showMessage(text, isError) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'message ' + (isError ? 'error' : 'success');
+        }
+        
+        async function submitPayment(event) {
+            event.preventDefault();
+            
+            const payment = {
+                user_id: parseInt(userId),
+                amount: 19.99,
+                method: document.getElementById('paymentMethod').value,
+                reference_code: document.getElementById('transactionRef').value
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/payments/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payment)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('paymentForm').classList.add('hidden');
+                    document.getElementById('successMessage').classList.remove('hidden');
+                } else {
+                    showMessage(data.detail || 'Failed to submit payment', true);
+                }
+            } catch (error) {
+                showMessage('Network error. Try again.', true);
+            }
+        }
+    </script>
+</body>
+</html>
