@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -428,6 +429,16 @@
         async function submitPayment(event) {
             event.preventDefault();
             
+            // First, create subscription
+            try {
+                await fetch(`${API_URL}/subscriptions/create?user_id=${userId}&plan=${selectedPlan}`, {
+                    method: 'POST'
+                });
+            } catch (e) {
+                // Subscription might already exist, continue
+            }
+            
+            // Then record payment
             const payment = {
                 user_id: parseInt(userId),
                 amount: selectedPrice,
