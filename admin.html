@@ -158,6 +158,7 @@
             <div class="admin-nav">
                 <button class="active" onclick="showSection('products')">Products</button>
                 <button onclick="showSection('orders')">Orders</button>
+                <button onclick="showSection('payments')">Payments</button>
                 <button onclick="logout()">Logout</button>
             </div>
         </div>
@@ -248,6 +249,28 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Payments Section -->
+        <div id="paymentsSection" class="section">
+            <h2>Pending Payments</h2>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Reference</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentsTable">
+                    <!-- Payments loaded here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -261,6 +284,7 @@
                 document.getElementById('adminPanel').style.display = 'block';
                 loadProducts();
                 loadOrders();
+                loadPayments();
             } else {
                 document.getElementById('errorMsg').style.display = 'block';
             }
@@ -280,9 +304,13 @@
             if (section === 'products') {
                 document.getElementById('productsSection').classList.add('active');
                 event.target.classList.add('active');
-            } else {
+            } else if (section === 'orders') {
                 document.getElementById('ordersSection').classList.add('active');
                 event.target.classList.add('active');
+            } else {
+                document.getElementById('paymentsSection').classList.add('active');
+                event.target.classList.add('active');
+                loadPayments();
             }
         }
 
@@ -388,10 +416,61 @@
             }
         }
 
+        async function loadPayments() {
+            try {
+                const response = await fetch(`${API_URL}/payments/pending`);
+                const payments = await response.json();
+                
+                const tbody = document.getElementById('paymentsTable');
+                if (payments.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No pending payments</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = payments.map(p => `
+                    <tr>
+                        <td>#${p.id}</td>
+                        <td>${p.full_name}</td>
+                        <td>${p.email}</td>
+                        <td>$${p.amount.toFixed(2)}</td>
+                        <td>${p.method}</td>
+                        <td>${p.reference_code}</td>
+                        <td>${p.created_at}</td>
+                        <td>
+                            <button class="btn-small btn-edit" onclick="verifyPayment('${p.reference_code}')">Verify</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading payments:', error);
+            }
+        }
+
+        async function verifyPayment(referenceCode) {
+            if (!confirm('Verify this payment and activate subscription?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/payments/verify?reference_code=${referenceCode}&notes=Verified via admin panel`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Payment verified and subscription activated!');
+                    loadPayments();
+                } else {
+                    alert(data.detail || 'Verification failed');
+                }
+            } catch (error) {
+                console.error('Error verifying payment:', error);
+                alert('Failed to verify payment');
+            }
+        }
+
         async function saveProduct(event) {
             event.preventDefault();
             
-            // Upload image if file selected
             const fileInput = document.getElementById('productImageFile');
             const imageUrl = document.getElementById('productImage').value;
             const urlInput = document.getElementById('productImageUrl').value;
