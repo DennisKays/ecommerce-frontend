@@ -8,6 +8,7 @@
     --border: #e5e7eb;
     --shadow: 0 1px 3px rgba(0,0,0,0.1);
     --radius: 8px;
+    --max-width: 1200px;
 }
 
 * {
@@ -20,10 +21,11 @@ body {
     font-family: 'Inter', sans-serif;
     color: var(--text);
     background: var(--bg);
+    line-height: 1.6;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: var(--max-width);
     margin: 0 auto;
     padding: 0 24px;
 }
@@ -51,6 +53,26 @@ body {
     text-decoration: none;
 }
 
+.nav-right {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.nav-link:hover {
+    background: #f3f4f6;
+}
+
 .cart-icon {
     position: relative;
     cursor: pointer;
@@ -76,18 +98,21 @@ body {
 .hero {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
-    padding: 60px 0;
+    padding: 80px 0;
     text-align: center;
 }
 
 .hero h1 {
     font-size: 2.5rem;
     margin-bottom: 12px;
+    font-weight: 700;
 }
 
 .hero p {
     font-size: 1.125rem;
     opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Filters */
@@ -152,24 +177,43 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 4px;
 }
 
 .product-name {
     font-size: 1.125rem;
     font-weight: 600;
-    margin: 8px 0;
+    margin-bottom: 8px;
 }
 
 .product-price {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary);
+    margin-bottom: 4px;
 }
 
 .product-stock {
     font-size: 0.875rem;
     color: var(--text-light);
-    margin-top: 4px;
+    margin-bottom: 12px;
+}
+
+.quick-add-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+}
+
+.quick-add-btn:hover {
+    background: var(--primary-dark);
 }
 
 /* Modal */
@@ -337,6 +381,25 @@ body {
     padding: 48px 0;
 }
 
+/* Footer */
+footer {
+    background: #1f2937;
+    color: #9ca3af;
+    padding: 40px 0;
+    margin-top: 48px;
+    text-align: center;
+}
+
+footer a {
+    color: #25d366;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile */
 @media (max-width: 768px) {
     .hero h1 {
         font-size: 1.75rem;
@@ -348,5 +411,9 @@ body {
     
     .cart-sidebar {
         width: 100%;
+    }
+    
+    .plans {
+        grid-template-columns: 1fr;
     }
 }
