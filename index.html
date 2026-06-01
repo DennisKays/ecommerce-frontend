@@ -6,12 +6,26 @@
     <title>Shop - E-commerce Demo</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .navbar .nav-right { display: flex; gap: 16px; align-items: center; }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .nav-link:hover { background: #f3f4f6; }
+    </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="container nav-content">
             <a href="#" class="logo">Store</a>
             <div class="nav-right">
+                <a href="auth.html" class="nav-link">My Account</a>
                 <div class="cart-icon" onclick="toggleCart()">
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M6 6h15l-1.5 9h-12L6 6z"></path>
