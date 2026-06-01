@@ -184,14 +184,15 @@
                 if (sub.status === 'no_subscription') {
                     statusHtml = `
                         <p style="color: var(--text-light); margin-bottom: 16px;">You don't have an active subscription.</p>
-                        <a href="subscribe.html" class="upgrade-btn">Subscribe Now - $19.99/month</a>
+                        <a href="subscribe.html" class="upgrade-btn">Subscribe Now</a>
                     `;
                 } else if (sub.status === 'active') {
                     const expires = new Date(sub.expires_at).toLocaleDateString();
+                    const daysLeft = Math.ceil((new Date(sub.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
                     statusHtml = `
                         <div class="plan-box">
                             <h3>${sub.plan.toUpperCase()} Plan</h3>
-                            <div class="plan-price">$19.99/month</div>
+                            <div class="plan-price">$${sub.plan === 'basic' ? '19.99' : sub.plan === 'pro' ? '49.99' : '99.99'}/month</div>
                         </div>
                         <div class="info-row" style="margin-top: 16px;">
                             <span class="label">Status</span>
@@ -207,7 +208,7 @@
                         </div>
                         <div class="info-row">
                             <span class="label">Days Remaining</span>
-                            <span class="value">${Math.ceil((new Date(sub.expires_at) - new Date()) / (1000 * 60 * 60 * 24))} days</span>
+                            <span class="value">${daysLeft} days</span>
                         </div>
                     `;
                 } else {
