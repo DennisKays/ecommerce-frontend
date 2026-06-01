@@ -25,16 +25,17 @@ function renderProducts(products) {
     }
     
     grid.innerHTML = products.map(product => `
-        <div class="product-card" onclick="openProduct(${product.id})">
-            <img src="${product.image_url}" alt="${product.name}" class="product-image">
-            <div class="product-info">
-                <div class="product-category">${product.category}</div>
-                <div class="product-name">${product.name}</div>
-                <div class="product-price">$${product.price.toFixed(2)}</div>
-                <div class="product-stock">${product.stock} in stock</div>
-            </div>
+    <div class="product-card" onclick="openProduct(${product.id})">
+        <img src="${product.image_url}" alt="${product.name}" class="product-image">
+        <div class="product-info">
+            <div class="product-category">${product.category}</div>
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">$${product.price.toFixed(2)}</div>
+            <div class="product-stock">${product.stock} in stock</div>
+            <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart(${product.id})">Add to Cart</button>
         </div>
-    `).join('');
+    </div>
+`).join('');
 }
 
 function filterProducts(category) {
