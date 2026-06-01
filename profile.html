@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --bg: #f9fafb;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        h1 { font-size: 1.5rem; }
+        .logout-btn {
+            padding: 8px 16px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+        .card h2 {
+            font-size: 1.125rem;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .info-row:last-child { border-bottom: none; }
+        .label { color: var(--text-light); font-size: 0.875rem; }
+        .value { font-weight: 500; }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-inactive { background: #fee2e2; color: #991b1b; }
+        .status-pending { background: #fef9c3; color: #854d0e; }
+        .plan-box {
+            background: #eff6ff;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+        }
+        .plan-box h3 { color: var(--primary); margin-bottom: 8px; }
+        .plan-price { font-size: 1.5rem; font-weight: 700; }
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .nav-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        .upgrade-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            text-align: center;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>My Account</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        
+        <div class="nav-links">
+            <a href="index.html">← Back to Store</a>
+            <a href="subscribe.html">Upgrade Plan →</a>
+        </div>
+
+        <div class="card">
+            <h2>Account Details</h2>
+            <div id="userInfo">
+                <p style="color: var(--text-light);">Loading...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Subscription Status</h2>
+            <div id="subscriptionInfo">
+                <p style="color: var(--text-light);">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://ecommerce-api-david.onrender.com';
+        const userId = localStorage.getItem('user_id');
+
+        if (!userId) {
+            window.location.href = 'auth.html';
+        }
+
+        async function loadUser() {
+            try {
+                const response = await fetch(`${API_URL}/auth/user/${userId}`);
+                const user = await response.json();
+                
+                document.getElementById('userInfo').innerHTML = `
+                    <div class="info-row">
+                        <span class="label">Name</span>
+                        <span class="value">${user.full_name}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Email</span>
+                        <span class="value">${user.email}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Phone</span>
+                        <span class="value">${user.phone || 'Not set'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Member Since</span>
+                        <span class="value">${new Date(user.created_at).toLocaleDateString()}</span>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('userInfo').innerHTML = '<p style="color: #dc2626;">Failed to load user info</p>';
+            }
+        }
+
+        async function loadSubscription() {
+            try {
+                const response = await fetch(`${API_URL}/subscriptions/user/${userId}`);
+                const sub = await response.json();
+                
+                let statusHtml = '';
+                
+                if (sub.status === 'no_subscription') {
+                    statusHtml = `
+                        <p style="color: var(--text-light); margin-bottom: 16px;">You don't have an active subscription.</p>
+                        <a href="subscribe.html" class="upgrade-btn">Subscribe Now - $19.99/month</a>
+                    `;
+                } else if (sub.status === 'active') {
+                    const expires = new Date(sub.expires_at).toLocaleDateString();
+                    statusHtml = `
+                        <div class="plan-box">
+                            <h3>${sub.plan.toUpperCase()} Plan</h3>
+                            <div class="plan-price">$19.99/month</div>
+                        </div>
+                        <div class="info-row" style="margin-top: 16px;">
+                            <span class="label">Status</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Started</span>
+                            <span class="value">${new Date(sub.starts_at).toLocaleDateString()}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Expires</span>
+                            <span class="value">${expires}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Days Remaining</span>
+                            <span class="value">${Math.ceil((new Date(sub.expires_at) - new Date()) / (1000 * 60 * 60 * 24))} days</span>
+                        </div>
+                    `;
+                } else {
+                    statusHtml = `
+                        <div class="info-row">
+                            <span class="label">Plan</span>
+                            <span class="value">${sub.plan.toUpperCase()}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Status</span>
+                            <span class="status-badge status-pending">Pending Payment</span>
+                        </div>
+                        <p style="color: var(--text-light); margin-top: 16px; font-size: 0.875rem;">
+                            Your payment is being verified. You'll receive access once confirmed.
+                        </p>
+                    `;
+                }
+                
+                document.getElementById('subscriptionInfo').innerHTML = statusHtml;
+            } catch (error) {
+                document.getElementById('subscriptionInfo').innerHTML = '<p style="color: #dc2626;">Failed to load subscription</p>';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user_id');
+            window.location.href = 'auth.html';
+        }
+
+        loadUser();
+        loadSubscription();
+    </script>
+</body>
+</html>
